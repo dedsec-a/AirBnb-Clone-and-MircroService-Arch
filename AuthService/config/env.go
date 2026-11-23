@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -21,9 +22,28 @@ func GetString(key string, fallback string) string{
 	//  it loads the file from the load function
 	load()
 	value , ok :=os.LookupEnv(key)
-	if !ok{
+	if !ok{	
 		return fallback
 	}
 
 	return  value
+}
+
+func getInt(key string , fallback int ) int {
+	load()  // load the variable
+	value , ok := os.LookupEnv(key)
+
+	if !ok{
+		return fallback
+	}
+
+	intValue , err := strconv.Atoi(value)
+	if err != nil{
+		fmt.Println("Error Typecasting the Value ")
+		return fallback
+	}
+	return intValue
+
+
+
 }

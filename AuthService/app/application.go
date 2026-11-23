@@ -2,6 +2,8 @@ package app
 
 import (
 	"AuthinGo/config"
+	db "AuthinGo/db/reposetries"
+	"AuthinGo/router"
 	"net/http"
 	"time"
 )
@@ -13,7 +15,7 @@ type Config struct{
 	 
 }
 
-func NewConfig() Config{
+func NewConfig() Config{ 
 	port := config.GetString("PORT" , ":8080")
 
 	return  Config{
@@ -22,13 +24,22 @@ func NewConfig() Config{
 }
 
 type Application struct{
-	Config Config 	
+	Config Config
+	Storage db.Storage
+}
+
+func NewApp() *Application{
+	return &Application{
+		Config: NewConfig(),
+		Storage: *db.NewStorage(),
+	}
 }
 
 func (app *Application) Run() error{
+
 	server := &http.Server{
 		Addr: app.Config.Addr,
-		Handler:  nil  , // setup the chi router here
+		Handler:  router.SetupRouter()  , // setup the chi router here
 		ReadTimeout: 10*time.Second,
 		WriteTimeout: 10*time.Second,
 
